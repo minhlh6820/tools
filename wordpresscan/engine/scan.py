@@ -6,7 +6,6 @@ from tornado import ioloop, httpclient
 from engine.core import *
 from engine.wordpress import *
 from lxml import etree
-from multiprocessing import Process, Pool
 
 class Scan_Engine:
 	def __init__(self, wordpress, aggressive):
@@ -20,6 +19,8 @@ class Scan_Engine:
 			self.theme_vuln_id = self.enumerating_themes_aggressive(wordpress)
 			self.plugin_vuln_id = self.enumerating_plugins_aggressive(wordpress)
 
+		# print(self.theme_vuln_id)
+		# print(self.plugin_vuln_id)
 		self.list_id = self.wp_vuln_id + self.theme_vuln_id + self.plugin_vuln_id
 
 	"""
@@ -236,10 +237,9 @@ class Scan_Engine:
 			for plugin in data.keys():
 				iter_aggressive += 1
 				http_client.fetch(wordpress.url+'/wp-content/themes/' + plugin, aggressive_request_themes, method='HEAD', validate_cert=False) == True
-				list_id += aggressive_request_themes
 			ioloop.IOLoop.instance().start()
 
-		return []
+		return list_id
 
 
 	"""
@@ -262,32 +262,31 @@ class Scan_Engine:
 			for plugin in data.keys():
 				iter_aggressive += 1
 				http_client.fetch(wordpress.url+'/wp-content/plugins/' + plugin, aggressive_request_plugins, method='HEAD', validate_cert=False) == True
-				list_id += aggressive_request_plugins
 			ioloop.IOLoop.instance().start()
 
 		return list_id
 
 
 def aggressive_request_plugins(response):
-	list_id = []
+	# list_id = []
 	if (response.code) == 200:
-		list_id = display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "plugins")
+		display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "plugins")
 
 	global iter_aggressive
 	iter_aggressive-= 1
 	if iter_aggressive == 0:
 		ioloop.IOLoop.instance().stop()
 
-	return list_id
+	# return list_id
 
 def aggressive_request_themes(response):
-	list_id = []
+	# list_id = []
 	if (response.code) == 200:
-		list_id = display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "themes")
+		display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "themes")
 
 	global iter_aggressive
 	iter_aggressive-= 1
 	if iter_aggressive == 0:
 		ioloop.IOLoop.instance().stop()
 
-	return list_id
+	# return list_id

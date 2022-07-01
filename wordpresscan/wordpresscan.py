@@ -10,7 +10,7 @@ from engine.brute import *
 
 def get_result(vuln_list_id, output_file):
 	dictionary = {"id": vuln_list_id}
-	current_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "result")
+	current_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 	output = os.path.join(current_path, output_file)
 	with open(output, 'a') as f:
 		json.dump(dictionary, f)
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 		# 	for _id in fuzz.list_id:
 		# 		get_result(_id, results.output)
 		vuln_list_id = scan.list_id + fuzz.list_id
-		if vuln_list_id:
+		if vuln_list_id and results.output is not None:
 			get_result(vuln_list_id, results.output)
 
 	else:

@@ -65,7 +65,6 @@ class Fuzz_Engine:
 				theme = theme.strip()
 				iter_aggressive += 1
 				http_client.fetch(wordpress.url + theme + "style.css", aggressive_request_plugins, method='HEAD', validate_cert=False) == True
-				list_id += aggressive_request_plugins
 			ioloop.IOLoop.instance().start()
 
 		return list_id
@@ -92,33 +91,34 @@ class Fuzz_Engine:
 				plugin = plugin.strip()
 				iter_aggressive += 1
 				http_client.fetch(wordpress.url + plugin, aggressive_request_plugins, method='HEAD', validate_cert=False) == True
-				list_id += aggressive_request_plugins
 			ioloop.IOLoop.instance().start()
+	
+		return list_id
 
 
 def aggressive_request_plugins(response):
-	list_id = []
+	# list_id = []
 	if (response.code) == 200:
-		list_id = display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "plugins")
+		display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "plugins")
 
 	global iter_aggressive
 	iter_aggressive-= 1
 	if iter_aggressive == 0:
 		ioloop.IOLoop.instance().stop()
 
-	return list_id
+	# return list_id
 
 def aggressive_request_themes(response):
-	list_id = []
+	# list_id = []
 	if (response.code) == 200:
-		list_id = display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "themes")
+		display_vulnerable_component(response.effective_url.split('/')[-2], "Unknown", "themes")
 
 	global iter_aggressive
 	iter_aggressive-= 1
 	if iter_aggressive == 0:
 		ioloop.IOLoop.instance().stop()
 
-	return list_id
+	# return list_id
 
 def aggressive_request_component(response):
 	if (response.code) == 200:
